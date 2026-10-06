@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5eadb">
+  <title>Thiệp mời sinh nhật</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: "Be Vietnam Pro", "Segoe UI", sans-serif;
+      color: #4a3c3a;
+      background: #fffaf7;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      --paper: #fffaf5;
+      --paper-strong: #fef3ef;
+      --ink: #4a3c3a;
+      --rose: #f6d6df;
+      --rose-deep: #eb9bb0;
+      --peach: #f9e7d1;
+      --mint: #dff3ea;
+      --mint-deep: #abd8c7;
+      --lavender: #e8e2fb;
+      --sage: #bfd8c3;
+      --gold: #f3d7a6;
+      --red: #d8757a;
+      --dark-rose: #8f4f5d;
+      --shadow-soft: rgb(116 88 80 / 18%);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      padding: 32px 20px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at top left, #fffdfb 0%, #fff5f3 24%, #fdf2dc 52%, #e8efe9 100%);
+    }
+
+    .ambient-media {
+      position: fixed;
+      z-index: 0;
+      inset: 0;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 15% 15%, rgb(255 255 255 / 80%) 0, transparent 32%),
+        radial-gradient(ellipse at 90% 85%, rgb(246 214 223 / 70%) 0, transparent 30%),
+        linear-gradient(135deg, #e9d4cb 0%, #dfeee8 45%, #f7e9d4 100%);
+    }
+
+    .ambient-media video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .ambient-media::after {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgb(35 24 20 / 48%), rgb(49 32 27 / 62%));
+      content: "";
+    }
+
+    body > :not(.ambient-media) {
+      position: relative;
+      z-index: 1;
+    }
+
+    .page-heading {
+      margin-bottom: 22px;
+      text-align: center;
+    }
+
+    .page-heading p {
+      margin: 0 0 7px;
+      color: #8e5a64;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .page-heading h1 {
+      margin: 0;
+      color: #6d4d52;
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: clamp(1.65rem, 5vw, 2.5rem);
+      font-weight: 500;
+      text-shadow: 0 3px 18px rgb(255 255 255 / 70%);
+    }
+
+    .book {
+      position: relative;
+      width: min(940px, 92vw);
+      aspect-ratio: 1.62;
+      perspective: 1800px;
+      filter: drop-shadow(0 20px 22px rgb(69 47 32 / 24%));
+    }
+
+    .inside {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-columns: 1fr 1.06fr 1fr;
+      overflow: hidden;
+      border: 9px solid #f5d8e3;
+      border-radius: 5px;
+      background:
+        linear-gradient(90deg, transparent calc(50% - 1px), rgb(120 92 70 / 18%) 50%, transparent calc(50% + 1px)),
+        radial-gradient(circle at 20% 30%, rgb(255 255 255 / 80%) 0 1px, transparent 2px),
+        radial-gradient(circle at 70% 65%, rgb(246 214 223 / 80%) 0 1px, transparent 2px),
+        radial-gradient(circle at 45% 80%, rgb(255 255 255 / 70%) 0 1px, transparent 2px),
+        linear-gradient(135deg, #f7dfe8 0%, #fff7ef 22%, #e5f4ee 44%, #f7e8d5 68%, #efe7fb 100%);
+      background-size: auto, 19px 23px, 29px 31px, 37px 27px, auto;
+      box-shadow: inset 0 0 35px rgb(255 255 255 / 60%), 0 16px 24px var(--shadow-soft);
+    }
+
+    .photo-column {
+      display: grid;
+      grid-template-rows: 1fr 0.88fr;
+      gap: 12px;
+      min-width: 0;
+      padding: 18px 12px;
+      transform: rotate(-1deg);
+    }
+
+    .photo-column.right {
+      transform: rotate(1deg);
+    }
+
+    .photo-slot {
+      position: relative;
+      display: block;
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+      border: 5px solid #fffaf5;
+      background: linear-gradient(135deg, #f6d6df, #fceccf);
+      box-shadow: 0 8px 18px rgb(120 92 70 / 15%);
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .photo-slot:hover {
+      z-index: 3;
+      transform: scale(1.035) rotate(1deg);
+      box-shadow: 0 8px 18px #000a;
+    }
+
+    .photo-slot img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 18%;
+    }
+
+    .photo-slot.side-photo-a img { object-position: 50% 18%; }
+    .photo-slot.side-photo-b img { object-position: 52% 26%; }
+    .photo-slot.side-photo-c img { object-position: 55% 20%; }
+    .photo-slot.side-photo-d img { object-position: 52% 18%; }
+
+    .invitation {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-width: 0;
+      padding: 16px 7px;
+      color: #5b4544;
+      text-align: center;
+    }
+
+    .invitation .tiny-label {
+      color: #a8637c;
+      font-size: clamp(0.52rem, 1.2vw, 0.73rem);
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .invitation h2 {
+      margin: 6px 0 10px;
+      color: #7d5f69;
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: clamp(1.2rem, 3.5vw, 2.55rem);
+      line-height: 0.98;
+      text-shadow: 2px 3px 0 rgb(255 255 255 / 80%);
+    }
+
+    .main-photo {
+      width: min(78%, 220px);
+      aspect-ratio: 0.86;
+      flex: 0 1 auto;
+      border-width: 6px;
+      transform: rotate(-2deg);
+    }
+
+    .main-photo img {
+      object-position: center 18%;
+    }
+
+    .cover-photo-window {
+      position: absolute;
+      z-index: 6;
+      top: 50%;
+      left: 50%;
+      display: grid;
+      width: min(19%, 176px);
+      aspect-ratio: 1;
+      place-items: center;
+      overflow: hidden;
+      border: 7px solid #fff6df;
+      border-radius: 50%;
+      background: #d9c6a6;
+      box-shadow: 0 0 0 3px #6e4935, 0 5px 16px #000a;
+      transform: translate(-50%, -50%);
+    }
+
+    .cover-photo-window img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .book.is-open .cover-photo-window {
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .invitation .invite-copy {
+      max-width: 230px;
+      margin: 12px 0 0;
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: clamp(0.62rem, 1.55vw, 0.9rem);
+      line-height: 1.45;
+      color: #5d4948;
+    }
+
+    .invite-copy strong {
+      color: #b9677a;
+    }
+
+    .event-location {
+      max-width: 100%;
+      margin: 7px 0 0;
+      color: #685858;
+      font-size: clamp(0.48rem, 1vw, 0.68rem);
+      line-height: 1.35;
+    }
+
+    .event-location strong {
+      color: #b9677a;
+    }
+
+    .countdown {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .countdown-label {
+      margin: 0 0 5px;
+      color: #a66a7d;
+      font-size: clamp(0.48rem, 1vw, 0.66rem);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .countdown-units {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: clamp(2px, 0.5vw, 6px);
+    }
+
+    .countdown-unit {
+      min-width: 0;
+      padding: 4px 2px 3px;
+      border: 1px solid rgb(166 108 124 / 35%);
+      border-radius: 8px;
+      background: rgb(255 255 255 / 35%);
+      box-shadow: inset 0 1px 0 rgb(255 255 255 / 60%);
+    }
+
+    .countdown-unit strong {
+      display: block;
+      color: #8b5667;
+      font-size: clamp(0.72rem, 1.7vw, 1.08rem);
+      line-height: 1.1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .countdown-unit span {
+      display: block;
+      margin-top: 2px;
+      color: #725d5f;
+      font-size: clamp(0.38rem, 0.8vw, 0.55rem);
+    }
+
+    .countdown-started {
+      margin: 0;
+      color: #8b5667;
+      font-size: clamp(0.58rem, 1.2vw, 0.78rem);
+      font-weight: 700;
+    }
+
+    .cover {
+      position: absolute;
+      z-index: 4;
+      top: 0;
+      bottom: 0;
+      width: 50%;
+      overflow: hidden;
+      border: 8px solid #f4dfe6;
+      color: var(--paper);
+      background:
+        radial-gradient(circle at 20% 20%, rgb(255 255 255 / 70%) 0 1px, transparent 2px),
+        radial-gradient(circle at 80% 75%, rgb(246 214 223 / 70%) 0 1px, transparent 2px),
+        linear-gradient(135deg, #f4dfe6 0%, #fff4df 45%, #dff3ea 100%);
+      background-size: 17px 21px, 23px 29px, auto;
+      backface-visibility: hidden;
+      box-shadow: inset 0 0 24px rgb(255 255 255 / 50%), 0 12px 22px rgb(115 92 78 / 12%);
+      transition: transform 1.15s cubic-bezier(.72, 0, .2, 1);
+    }
+
+    .cover-left {
+      left: 0;
+      border-right: 1px solid rgb(145 110 110 / 35%);
+      transform-origin: left center;
+    }
+
+    .cover-right {
+      right: 0;
+      border-left: 1px solid rgb(145 110 110 / 35%);
+      transform-origin: right center;
+    }
+
+    .cover-content {
+      position: relative;
+      display: flex;
+      width: 100%;
+      height: 100%;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 8px;
+    }
+
+    .cover-left .cover-content {
+      padding-left: 16px;
+    }
+
+    .cover-right .cover-content {
+      padding-right: 16px;
+    }
+
+    .stars {
+      position: absolute;
+      color: #f2d38c;
+      font-size: clamp(1.1rem, 4vw, 2.7rem);
+      line-height: 1;
+      text-shadow: 2px 3px 0 rgb(143 97 99 / 40%), 0 0 10px rgb(255 255 255 / 60%);
+    }
+
+    .star-a { top: 6%; left: 7%; transform: rotate(-17deg); }
+    .star-b { top: 7%; right: 7%; color: #d75a43; transform: rotate(13deg); }
+    .star-c { bottom: 7%; left: 7%; color: #91a6c3; transform: rotate(12deg); }
+    .star-d { right: 7%; bottom: 7%; transform: rotate(-12deg); }
+    .star-e { top: 6%; right: 7%; color: #bbcde0; font-size: clamp(1rem, 3vw, 2rem); }
+    .star-f { bottom: 25%; left: 7%; color: #d75a43; font-size: clamp(1rem, 3vw, 2rem); }
+
+    .cover-right .star-b {
+      top: 29%;
+      right: 7%;
+    }
+
+    .balloons {
+      position: absolute;
+      bottom: 9%;
+      left: 18%;
+      font-size: clamp(1.6rem, 5vw, 3.5rem);
+      filter: drop-shadow(2px 4px 2px #0008);
+      transform: rotate(-10deg);
+    }
+
+    .cake-sticker {
+      position: absolute;
+      right: 20%;
+      bottom: 8%;
+      font-size: clamp(1.65rem, 5vw, 3.8rem);
+      filter: drop-shadow(2px 4px 2px #0008);
+      transform: rotate(8deg);
+    }
+
+    .party-hat {
+      position: absolute;
+      bottom: 9%;
+      left: 38%;
+      font-size: clamp(1.35rem, 4vw, 2.8rem);
+      transform: rotate(12deg);
+    }
+
+    .disco {
+      position: absolute;
+      top: 0%;
+      right: 20%;
+      font-size: clamp(1.7rem, 4.5vw, 3rem);
+      filter: drop-shadow(0 0 8px #fff8);
+    }
+
+    .letter-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(2px, 0.7vw, 7px);
+      max-width: calc(100% - 20px);
+      margin: 0;
+    }
+
+    .cover-word {
+      position: absolute;
+      z-index: 1;
+      top: 16%;
+      left: 50%;
+      width: max-content;
+      transform: translateX(-50%) rotate(-2deg);
+    }
+
+    .birthday-word {
+      gap: clamp(1px, 0.35vw, 4px);
+    }
+
+    .letter {
+      display: inline-grid;
+      width: clamp(23px, 5.2vw, 48px);
+      height: clamp(29px, 6.3vw, 58px);
+      place-items: center;
+      border: 2px solid rgb(255 255 255 / 60%);
+      color: #5a514f;
+      background: linear-gradient(135deg, #fff5ea 0%, #fbe4e9 100%);
+      box-shadow: 2px 4px 0 rgb(117 97 88 / 18%);
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: clamp(1rem, 4.2vw, 2.5rem);
+      font-weight: 900;
+      line-height: 1;
+      text-shadow: 1px 1px 0 rgb(255 255 255 / 80%);
+    }
+
+    .letter:nth-child(3n + 1) { color: #fff9f4; background: linear-gradient(135deg, #d58fa1 0%, #bf6f88 100%); }
+    .letter:nth-child(3n + 2) { color: #5f4f54; background: linear-gradient(135deg, #fffaf1 0%, #f4e7d7 100%); }
+    .letter:nth-child(3n) { color: #fffaf4; background: linear-gradient(135deg, #9bc5b0 0%, #71a58e 100%); }
+
+    .cover-subtitle {
+      position: absolute;
+      top: 30%;
+      left: 50%;
+      color: #7a5f66;
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: clamp(0.55rem, 1.45vw, 0.92rem);
+      font-style: italic;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+      transform: translateX(-50%);
+    }
+
+    .ribbon-wrap {
+      position: absolute;
+      z-index: 5;
+      inset: 0;
+      overflow: hidden;
+      border-radius: 5px;
+      contain: paint;
+      clip-path: inset(0 round 5px);
+      pointer-events: none;
+    }
+
+    .ribbon {
+      position: absolute;
+      top: 50%;
+      left: -10%;
+      width: 120%;
+      height: clamp(15px, 3vw, 25px);
+      border: 1px solid #e5d3a8;
+      background: repeating-linear-gradient(90deg, #efe5c6 0 7px, #8ea09a 8px 12px, #efe5c6 13px 18px);
+      box-shadow: 0 3px 7px #0009;
+      transform: translateY(-50%) rotate(10deg);
+    }
+
+    .ribbon::after {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      border: inherit;
+      background: inherit;
+      box-shadow: inherit;
+      content: "";
+      transform: translate(-50%, -50%) rotate(-20deg);
+    }
+
+    .cover-trigger {
+      position: absolute;
+      z-index: 3;
+      bottom: 7%;
+      left: 50%;
+      padding: 8px 13px;
+      border: 1px solid rgb(255 255 255 / 60%);
+      border-radius: 999px;
+      color: #fffaf7;
+      background: linear-gradient(135deg, rgba(214, 144, 167, 0.9) 0%, rgba(150, 178, 160, 0.9) 100%);
+      font: inherit;
+      font-size: clamp(0.58rem, 1.3vw, 0.8rem);
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+      cursor: pointer;
+      transform: translateX(-50%);
+    }
+
+    .cover-trigger:hover,
+    .toggle-button:hover {
+      background: linear-gradient(135deg, #e3aab9 0%, #afd0be 100%);
+    }
+
+    .book.is-open .cover-left {
+      transform: rotateY(-155deg);
+    }
+
+    .book.is-open .cover-right {
+      transform: rotateY(155deg);
+    }
+
+    .book.is-open .ribbon-wrap {
+      visibility: hidden;
+    }
+
+    .book.is-open .cover-trigger {
+      visibility: hidden;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      min-height: 54px;
+      align-items: center;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .toggle-button,
+    .audio-button {
+      padding: 12px 25px;
+      border: 0;
+      border-radius: 999px;
+      color: #fffaf7;
+      background: linear-gradient(135deg, #d98ca2 0%, #c77a90 100%);
+      box-shadow: 0 8px 16px rgb(179 114 132 / 28%);
+      font: inherit;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: background 160ms ease, transform 160ms ease;
+    }
+
+    .toggle-button:hover,
+    .audio-button:hover {
+      background: linear-gradient(135deg, #e4a5b7 0%, #d58aa0 100%);
+    }
+
+    .toggle-button:active,
+    .audio-button:active {
+      transform: scale(0.97);
+    }
+
+    .audio-button[aria-pressed="true"] {
+      color: #5d4747;
+      background: linear-gradient(135deg, #f9e7c5 0%, #f4dca7 100%);
+    }
+
+    .media-status {
+      max-width: min(90vw, 620px);
+      margin: 9px 0 0;
+      color: #7a5d66;
+      font-size: 0.8rem;
+      text-align: center;
+    }
+
+    .media-status[hidden] {
+      display: none;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 24px 12px;
+      }
+
+      .page-heading {
+        margin-bottom: 16px;
+      }
+
+      .book {
+        width: min(96vw, 520px);
+        aspect-ratio: 0.88;
+      }
+
+      .inside {
+        grid-template-columns: 0.84fr 1.1fr 0.84fr;
+        border-width: 6px;
+      }
+
+      .photo-column {
+        grid-template-rows: 1fr 0.8fr;
+        gap: 7px;
+        padding: 10px 5px;
+      }
+
+      .photo-slot {
+        border-width: 3px;
+      }
+
+      .main-photo {
+        width: 92%;
+      }
+
+      .cover-photo-window {
+        width: min(24%, 112px);
+        border-width: 4px;
+      }
+
+      .invitation {
+        padding: 9px 2px;
+      }
+
+      .invitation h2 {
+        font-size: clamp(1rem, 6vw, 1.8rem);
+      }
+
+      .invitation .invite-copy {
+        font-size: clamp(0.55rem, 2.5vw, 0.76rem);
+      }
+
+      .event-location {
+        margin-top: 4px;
+        font-size: clamp(0.44rem, 2vw, 0.58rem);
+      }
+
+      .countdown {
+        margin-top: 6px;
+      }
+
+      .countdown-label {
+        margin-bottom: 3px;
+        font-size: 0.42rem;
+      }
+
+      .countdown-unit {
+        padding: 3px 1px 2px;
+      }
+
+      .countdown-unit strong {
+        font-size: clamp(0.58rem, 3vw, 0.76rem);
+      }
+
+      .countdown-unit span {
+        font-size: 0.38rem;
+      }
+
+      .cover {
+        border-width: 6px;
+      }
+
+      .cover-left .cover-content { padding-left: 8px; }
+      .cover-right .cover-content { padding-right: 8px; }
+
+      .letter {
+        width: clamp(18px, 5.2vw, 25px);
+        height: clamp(24px, 6.2vw, 31px);
+        font-size: clamp(0.78rem, 4.2vw, 1.2rem);
+      }
+
+      .birthday-word {
+        gap: 1px;
+      }
+
+      .cover-word {
+        top: 14%;
+      }
+
+      .cover-subtitle {
+        top: 36%;
+        font-size: clamp(0.46rem, 2.1vw, 0.65rem);
+      }
+
+      .cover-trigger {
+        bottom: 5%;
+        padding: 6px 9px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-media" aria-hidden="true">
+    <video id="backgroundVideo" autoplay muted loop playsinline>
+      <source src="background.mp4" type="video/mp4">
+    </video>
+  </div>
+  <audio id="backgroundAudio" src="background.mp3" loop preload="none"></audio>
+
+  <header class="page-heading">
+    <p>Một tấm thiệp nhỏ, thật nhiều niềm vui</p>
+    <h1>Thiệp mời sinh nhật</h1>
+  </header>
+
+  <main>
+    <section class="book" id="book" aria-label="Thiệp mời gập hai cánh">
+      <div class="inside" id="inside" inert>
+        <div class="photo-column">
+          <div class="photo-slot side-photo-a"><img src="anh2.jpg" alt="Ảnh sinh nhật thứ nhất"></div>
+          <div class="photo-slot side-photo-b"><img src="anh3.jpg" alt="Ảnh sinh nhật thứ hai"></div>
+        </div>
+
+        <div class="invitation">
+          <span class="tiny-label">You're invited</span>
+          <h2>Birthday<br>Party!</h2>
+          <div class="photo-slot main-photo"><img src="anh1.jpg" alt="Ảnh chính của thiệp mời"></div>
+          <p class="invite-copy">Thân mời bạn đến chung vui trong ngày sinh nhật đặc biệt này!<br><strong>Hẹn gặp bạn nhé!</strong></p>
+          <p class="event-location"><strong>📍 Địa điểm:</strong> Hẻm 15, Tp.Quy Nhơn, Gia Lai</p>
+          <section class="countdown" id="countdown" aria-label="Đếm ngược đến ngày diễn ra sự kiện">
+            <p class="countdown-label">Còn lại đến ngày tiệc</p>
+            <div class="countdown-units">
+              <div class="countdown-unit"><strong id="countdownDays">00</strong><span>Ngày</span></div>
+              <div class="countdown-unit"><strong id="countdownHours">00</strong><span>Giờ</span></div>
+              <div class="countdown-unit"><strong id="countdownMinutes">00</strong><span>Phút</span></div>
+              <div class="countdown-unit"><strong id="countdownSeconds">00</strong><span>Giây</span></div>
+            </div>
+          </section>
+        </div>
+
+        <div class="photo-column right">
+          <div class="photo-slot side-photo-c"><img src="anh5.jpg" alt="Ảnh sinh nhật thứ ba"></div>
+          <div class="photo-slot side-photo-d"><img src="anh4.jpg" alt="Ảnh sinh nhật thứ tư"></div>
+        </div>
+      </div>
+
+      <div class="cover cover-left">
+        <div class="cover-content">
+          <span class="stars star-a" aria-hidden="true">✦</span>
+          <span class="stars star-b" aria-hidden="true">★</span>
+          <span class="stars star-c" aria-hidden="true">✦</span>
+          <span class="stars star-f" aria-hidden="true">★</span>
+          <span class="balloons" aria-hidden="true">🎈</span>
+          <span class="party-hat" aria-hidden="true">🥳</span>
+          <div class="letter-row cover-word" aria-label="Happy">
+            <span class="letter">H</span><span class="letter">A</span><span class="letter">P</span><span class="letter">P</span><span class="letter">Y</span>
+          </div>
+          <span class="cover-subtitle">A little party for you</span>
+        </div>
+      </div>
+
+      <div class="cover cover-right">
+        <div class="cover-content">
+          <span class="stars star-d" aria-hidden="true">✦</span>
+          <span class="stars star-e" aria-hidden="true">★</span>
+          <span class="stars star-b" aria-hidden="true">✦</span>
+          <span class="disco" aria-hidden="true">🪩</span>
+          <span class="cake-sticker" aria-hidden="true">🧁</span>
+          <div class="letter-row cover-word birthday-word" aria-label="Birthday">
+            <span class="letter">B</span><span class="letter">I</span><span class="letter">R</span><span class="letter">T</span><span class="letter">H</span><span class="letter">D</span><span class="letter">A</span><span class="letter">Y</span>
+          </div>
+          <span class="cover-subtitle">Make a wish ✨</span>
+        </div>
+      </div>
+
+      <div class="ribbon-wrap" aria-hidden="true">
+        <span class="ribbon"></span>
+      </div>
+      <div class="cover-photo-window" aria-label="Ảnh chính nhìn thấy khi thiệp đóng">
+        <img src="anh1.jpg" alt="Ảnh tròn ở giữa bìa thiệp">
+      </div>
+    </section>
+
+    <div class="controls">
+      <button class="toggle-button" id="toggleButton" type="button" aria-expanded="false" aria-controls="inside">Mở thiệp</button>
+      <button class="audio-button" id="audioButton" type="button" aria-pressed="false">Bật nhạc nền ♫</button>
+    </div>
+    <p class="media-status" id="mediaStatus" role="status" hidden></p>
+  </main>
+
+  <script>
+    const book = document.getElementById("book");
+    const inside = document.getElementById("inside");
+    const toggleButton = document.getElementById("toggleButton");
+    const backgroundVideo = document.getElementById("backgroundVideo");
+    const backgroundAudio = document.getElementById("backgroundAudio");
+    const audioButton = document.getElementById("audioButton");
+    const mediaStatus = document.getElementById("mediaStatus");
+    const countdown = document.getElementById("countdown");
+    const countdownDays = document.getElementById("countdownDays");
+    const countdownHours = document.getElementById("countdownHours");
+    const countdownMinutes = document.getElementById("countdownMinutes");
+    const countdownSeconds = document.getElementById("countdownSeconds");
+    const eventTime = new Date("2027-02-12T19:30:00");
+    let countdownTimer = null;
+
+    function updateCountdown() {
+      const remaining = eventTime.getTime() - Date.now();
+      if (remaining <= 0) {
+        countdown.innerHTML = '<p class="countdown-started">Sự kiện đã bắt đầu! 🎉</p>';
+        window.clearInterval(countdownTimer);
+        return;
+      }
+
+      const days = Math.floor(remaining / 86400000);
+      const hours = Math.floor((remaining % 86400000) / 3600000);
+      const minutes = Math.floor((remaining % 3600000) / 60000);
+      const seconds = Math.floor((remaining % 60000) / 1000);
+      countdownDays.textContent = String(days).padStart(2, "0");
+      countdownHours.textContent = String(hours).padStart(2, "0");
+      countdownMinutes.textContent = String(minutes).padStart(2, "0");
+      countdownSeconds.textContent = String(seconds).padStart(2, "0");
+    }
+
+    function setBookOpen(isOpen) {
+      book.classList.toggle("is-open", isOpen);
+      inside.inert = !isOpen;
+      toggleButton.setAttribute("aria-expanded", String(isOpen));
+      toggleButton.textContent = isOpen ? "Gấp thiệp lại" : "MỞ THIỆP ✨";
+    }
+
+    async function playBackgroundAudio() {
+      try {
+        await backgroundAudio.play();
+        mediaStatus.hidden = true;
+      } catch (error) {
+        mediaStatus.textContent = "Không thể phát nhạc. Hãy kiểm tra tệp background.mp3 và thử lại.";
+        mediaStatus.hidden = false;
+      }
+    }
+
+    toggleButton.addEventListener("click", () => {
+      const isOpening = !book.classList.contains("is-open");
+      setBookOpen(isOpening);
+      if (isOpening && backgroundAudio.paused) {
+        playBackgroundAudio();
+      }
+    });
+
+    audioButton.addEventListener("click", async () => {
+      if (!backgroundAudio.paused) {
+        backgroundAudio.pause();
+        return;
+      }
+
+      await playBackgroundAudio();
+    });
+
+    backgroundAudio.addEventListener("play", () => {
+      audioButton.textContent = "Tắt nhạc nền ♫";
+      audioButton.setAttribute("aria-pressed", "true");
+    });
+
+    backgroundAudio.addEventListener("pause", () => {
+      audioButton.textContent = "Bật nhạc nền ♫";
+      audioButton.setAttribute("aria-pressed", "false");
+    });
+
+    backgroundAudio.addEventListener("error", () => {
+      mediaStatus.textContent = "Không tải được nhạc nền. Hãy đặt tệp MP3 tại background.mp3.";
+      mediaStatus.hidden = false;
+    });
+
+    backgroundVideo.addEventListener("error", () => {
+      mediaStatus.textContent = "Không tải được video nền. Hãy đặt tệp MP4 tại background.mp4.";
+      mediaStatus.hidden = false;
+    });
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      backgroundVideo.pause();
+    }
+
+    updateCountdown();
+    if (countdownTimer !== null || eventTime.getTime() > Date.now()) {
+      countdownTimer = window.setInterval(updateCountdown, 1000);
+    }
+  </script>
+</body>
+</html>
